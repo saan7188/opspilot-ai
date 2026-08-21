@@ -1,0 +1,1152 @@
+Build a complete, functional B2B SaaS product called "OpsPilot AI" — an AI-powered Customer Operations & Support Platform.
+
+IMPORTANT:
+This is NOT a landing-page project or UI mockup. Build the actual working application with frontend, backend/database, authentication, authorization, CRUD workflows, AI architecture, demo data, security, tests, documentation, and deployment configuration.
+
+Do not create fake customers, fake revenue, fake testimonials, fake production history, or fake proprietary data. All demo information must be clearly synthetic.
+
+==================================================
+PRODUCT
+==================================================
+
+OpsPilot AI helps customer-support teams:
+
+- Manage customers
+- Manage support tickets
+- Assign tickets to agents/teams
+- Manage conversations and internal notes
+- Search an internal knowledge base
+- Summarize tickets with AI
+- Classify tickets with AI
+- Recommend priority
+- Suggest customer responses
+- Recommend escalation
+- Recommend next actions
+- Find similar tickets
+- Track SLAs
+- Monitor team performance
+- View analytics
+- Maintain audit logs
+- Manage users, teams and permissions
+
+AI suggestions must NEVER automatically send messages or perform irreversible actions. A human must review/approve AI-generated customer responses.
+
+==================================================
+TECH STACK
+==================================================
+
+Use the modern stack supported by Lovable.
+
+Preferred:
+- React
+- TypeScript
+- Tailwind CSS
+- shadcn/ui
+- Supabase
+- PostgreSQL
+- Supabase Auth
+- Supabase Storage
+- Supabase Edge Functions/server-side functions
+
+Use strong TypeScript typing and reusable components.
+
+Never expose API keys or secrets in frontend code.
+
+Create .env.example.
+
+==================================================
+DESIGN
+==================================================
+
+Professional enterprise B2B SaaS design.
+
+Clean, modern, polished, responsive, accessible and information-rich without clutter.
+
+Include:
+- Sidebar navigation
+- Top bar
+- Cards
+- Tables
+- Charts
+- Filters
+- Search
+- Modals
+- Drawers
+- Tabs
+- Badges
+- Toasts
+- Confirmation dialogs
+- Loading states
+- Empty states
+- Error states
+
+Support light and dark mode.
+
+Brand:
+OpsPilot AI
+
+Navigation:
+
+Dashboard
+Tickets
+Customers
+Knowledge Base
+AI Assistant
+Analytics
+Team
+Audit Logs
+Notifications
+Settings
+
+Do not make the UI look like a generic chatbot.
+
+==================================================
+AUTHENTICATION
+==================================================
+
+Use Supabase Auth.
+
+Implement:
+- Sign up
+- Sign in
+- Sign out
+- Password reset
+- Session persistence
+- Protected routes
+
+Roles:
+ADMIN
+MANAGER
+AGENT
+VIEWER
+
+Implement real authorization and database-level RLS, not just frontend button hiding.
+
+ADMIN:
+Full organization access.
+
+MANAGER:
+Tickets, customers, teams, knowledge, analytics, AI and permitted audit access.
+
+AGENT:
+Assigned tickets, customers, knowledge, AI assistance and ticket operations.
+
+VIEWER:
+Read-only permitted access.
+
+==================================================
+MULTI-TENANCY
+==================================================
+
+Support organizations/workspaces.
+
+Tables:
+organizations
+profiles
+organization_members
+
+Every organization must only access its own data.
+
+Use organization_id consistently.
+
+Implement PostgreSQL/Supabase RLS policies to prevent cross-organization access.
+
+==================================================
+DATABASE
+==================================================
+
+Create proper PostgreSQL migrations, relationships, indexes, constraints and timestamps.
+
+Tables:
+
+organizations
+profiles
+organization_members
+teams
+team_members
+customers
+customer_contacts
+customer_notes
+tickets
+ticket_messages
+ticket_comments
+ticket_attachments
+ticket_assignments
+tags
+ticket_tags
+knowledge_documents
+knowledge_chunks
+knowledge_categories
+ai_interactions
+ai_feedback
+sla_policies
+ticket_sla_events
+notifications
+audit_logs
+saved_views
+organization_settings
+
+Use UUID primary keys, foreign keys, indexes and created_at/updated_at.
+
+Index common queries including organization_id, status, priority, assigned agent, customer, created_at and updated_at.
+
+==================================================
+CUSTOMERS
+==================================================
+
+Customer fields:
+
+id
+organization_id
+name
+company
+email
+phone
+customer_tier
+status
+notes
+created_at
+updated_at
+
+Tiers:
+Standard
+Priority
+Enterprise
+
+Statuses:
+Active
+Inactive
+At Risk
+
+Customer pages:
+- Customer list
+- Customer detail
+- Search
+- Filter
+- Ticket history
+- Open tickets
+- Resolved tickets
+- Timeline
+- Internal notes
+- Recent interactions
+
+==================================================
+TICKETS
+==================================================
+
+Ticket fields:
+
+id
+organization_id
+customer_id
+title
+description
+status
+priority
+category
+source
+assigned_agent_id
+assigned_team_id
+sla_policy_id
+sla_deadline
+first_response_at
+resolved_at
+closed_at
+created_at
+updated_at
+
+Statuses:
+Open
+In Progress
+Waiting for Customer
+Resolved
+Closed
+
+Priorities:
+Low
+Medium
+High
+Urgent
+
+Sources:
+Email
+Web
+API
+Manual
+
+Categories:
+Billing
+Technical
+Account
+Security
+Product
+Shipping
+General
+
+Ticket list must support:
+- Search
+- Status filter
+- Priority filter
+- Category filter
+- Team filter
+- Agent filter
+- Customer filter
+- SLA filter
+- Date filter
+- Sorting
+- Pagination
+
+Show:
+ID, customer, subject, priority, status, assignee, team, SLA, created and updated dates.
+
+==================================================
+TICKET DETAIL
+==================================================
+
+Create a complete ticket detail page.
+
+Main:
+- Title
+- Customer
+- Conversation
+- Messages
+- Attachments
+- Internal comments
+
+Sidebar:
+- Status
+- Priority
+- Category
+- Team
+- Agent
+- Tags
+- SLA
+- Created/updated dates
+
+Actions:
+- Assign/reassign
+- Change team
+- Change status
+- Change priority
+- Add/remove tags
+- Internal note
+- Customer reply
+- Resolve
+- Close
+- Reopen
+
+Clearly distinguish internal notes from customer-visible replies.
+
+Every important action should create an audit event.
+
+==================================================
+SLA
+==================================================
+
+Implement configurable SLA policies.
+
+Seed examples:
+
+Standard:
+First response 8 hours
+Resolution 48 hours
+
+Priority:
+First response 2 hours
+Resolution 12 hours
+
+Urgent:
+First response 30 minutes
+Resolution 4 hours
+
+Show:
+- Healthy
+- At Risk
+- Breached
+- Met
+
+Calculate deadlines and record SLA events.
+
+Make SLA calculation logic testable.
+
+==================================================
+KNOWLEDGE BASE
+==================================================
+
+Create a complete knowledge base.
+
+Features:
+- Create document
+- Edit document
+- Publish
+- Archive
+- Search
+- Categories
+- Tags
+- Versioning
+- Author
+- Updated date
+
+Statuses:
+Draft
+Published
+Archived
+
+Tables:
+knowledge_documents
+knowledge_chunks
+knowledge_categories
+
+Support text/Markdown documents.
+
+Use Supabase Storage for appropriate attachments.
+
+Support PDF/TXT/MD/CSV where practical.
+
+Validate file type and size.
+
+Prepare the architecture for semantic/vector search.
+
+If embeddings are not configured, provide a reliable keyword-search fallback and do not pretend it is vector search.
+
+==================================================
+AI SYSTEM
+==================================================
+
+Create a secure server-side AI provider abstraction.
+
+Conceptually:
+
+AIProvider
+DemoAIProvider
+RealAIProvider
+
+Configuration through environment variables such as:
+
+AI_PROVIDER
+AI_API_KEY
+AI_MODEL
+
+Never expose AI_API_KEY to the browser.
+
+If no AI API is configured, the application must still work using deterministic DEMO AI responses.
+
+Clearly label demo responses as "DEMO AI".
+
+Do not pretend demo responses are real model outputs.
+
+==================================================
+AI TICKET FEATURES
+==================================================
+
+Add an AI panel to ticket details.
+
+1. SUMMARIZE
+
+Return:
+- Customer problem
+- Important facts
+- Previous actions
+- Current state
+- Recommended next step
+
+2. CLASSIFY
+
+Predict:
+- Category
+- Priority
+- Sentiment
+- Urgency
+- Escalation requirement
+
+Show confidence and reasoning.
+
+3. SUGGEST REPLY
+
+Use:
+- Ticket conversation
+- Customer context
+- Relevant knowledge documents
+- Ticket category
+- Priority
+
+Generate a professional customer response.
+
+Workflow:
+
+Generate → Review → Edit → Approve → Send
+
+Never automatically send.
+
+4. ESCALATION
+
+Recommend:
+- No escalation
+- Manager
+- Technical
+- Security
+- Billing
+
+Show reason and confidence.
+
+5. NEXT ACTION
+
+Recommend the next operational step.
+
+6. SIMILAR TICKETS
+
+Show related historical tickets with similarity/relevance.
+
+Use semantic/vector search if configured; otherwise use a clearly labeled keyword-based fallback.
+
+Store AI interactions and human feedback/overrides.
+
+==================================================
+AI ASSISTANT
+==================================================
+
+Create a dedicated AI Assistant page.
+
+Users can ask:
+
+"What is our refund policy?"
+"Which tickets need escalation?"
+"Summarize today's urgent tickets."
+"How should an agent handle duplicate billing?"
+"Find similar issues."
+
+Show:
+- Conversation history
+- AI answers
+- Knowledge sources
+- Related tickets
+- Confidence where available
+- Source excerpts
+
+Never invent sources.
+
+If no relevant knowledge is found, say so.
+
+==================================================
+DASHBOARD
+==================================================
+
+Create operational dashboard.
+
+Cards:
+- Open tickets
+- Urgent tickets
+- SLA at risk
+- SLA breached
+- Resolved today
+- Average response time
+- Average resolution time
+- AI-assisted tickets
+
+Charts:
+- Ticket volume over time
+- Status distribution
+- Priority distribution
+- Category distribution
+- SLA performance
+- Agent workload
+
+Filters:
+Today
+7 days
+30 days
+90 days
+
+Use synthetic/demo data and label it clearly.
+
+==================================================
+TEAM
+==================================================
+
+Team management page.
+
+Show:
+- Teams
+- Members
+- Roles
+- Workload
+- Open tickets
+- Resolved tickets
+
+ADMIN/MANAGER can:
+- Create team
+- Edit team
+- Add member
+- Remove member
+
+==================================================
+ANALYTICS
+==================================================
+
+Create analytics dashboard.
+
+Metrics:
+- Ticket volume
+- Resolution rate
+- Average first response
+- Average resolution
+- SLA compliance
+- Tickets per agent
+- Tickets by category
+- Tickets by priority
+- AI usage
+- AI acceptance rate
+
+Add date filtering and CSV export where practical.
+
+==================================================
+NOTIFICATIONS
+==================================================
+
+Implement in-app notifications.
+
+Triggers:
+- Ticket assigned
+- Ticket reassigned
+- Mention
+- SLA approaching
+- SLA breached
+- Ticket reopened
+- Escalation recommendation
+
+Show unread count.
+
+Allow mark-as-read.
+
+==================================================
+AUDIT LOG
+==================================================
+
+Track important actions:
+
+LOGIN
+LOGOUT
+TICKET_CREATED
+TICKET_UPDATED
+TICKET_ASSIGNED
+TICKET_STATUS_CHANGED
+TICKET_PRIORITY_CHANGED
+CUSTOMER_UPDATED
+KNOWLEDGE_CREATED
+KNOWLEDGE_UPDATED
+AI_ANALYSIS_CREATED
+AI_RESPONSE_APPROVED
+AI_RESPONSE_REJECTED
+USER_ROLE_CHANGED
+TEAM_UPDATED
+
+Fields:
+id
+organization_id
+actor_id
+action
+entity_type
+entity_id
+metadata
+created_at
+
+Audit logs are read-only.
+
+==================================================
+SETTINGS
+==================================================
+
+Create:
+
+Organization settings
+Profile settings
+User management
+Team settings
+AI configuration
+SLA policies
+Notification settings
+Security settings
+
+Never display stored API keys.
+
+==================================================
+GLOBAL SEARCH
+==================================================
+
+Implement global search across:
+
+Tickets
+Customers
+Knowledge documents
+
+Use:
+Cmd/Ctrl + K
+
+Group results by type.
+
+==================================================
+NOTIFICATIONS/UX
+==================================================
+
+Every important action needs:
+
+- Loading state
+- Success state
+- Error state
+- Empty state
+- Validation
+- Toast feedback
+- Retry where appropriate
+
+Prevent duplicate form submissions.
+
+Do not leave dead buttons.
+
+Do not expose raw backend errors.
+
+==================================================
+SECURITY
+==================================================
+
+Implement:
+
+- Supabase RLS
+- Organization isolation
+- Role-based authorization
+- Protected routes
+- Server-side secrets
+- Input validation
+- Safe rendering
+- Secure uploads
+- Audit logs
+
+A user must never access another organization's records by modifying IDs in requests.
+
+Do not rely only on frontend authorization.
+
+==================================================
+ACCESSIBILITY
+==================================================
+
+Use good accessibility practices:
+
+- Keyboard navigation
+- Labels
+- Focus states
+- Accessible dialogs
+- Good contrast
+- Screen-reader-friendly controls
+- Do not rely only on color
+
+==================================================
+DEMO DATA
+==================================================
+
+Create clearly synthetic demo data.
+
+At minimum:
+
+3 demo organizations
+20 users
+5 teams
+40 customers
+150 tickets
+300+ messages
+30 knowledge documents
+50+ audit events
+Multiple SLA policies
+AI interaction examples
+Notifications
+
+Use realistic but fictional names.
+
+Clearly label demo data as SYNTHETIC/DEMO.
+
+Do not claim these are real customers.
+
+==================================================
+DEMO ACCOUNTS
+==================================================
+
+Provide setup/documentation for:
+
+Admin
+Manager
+Agent
+Viewer
+
+Do not hardcode insecure credentials into production code.
+
+==================================================
+ERROR/FALLBACK BEHAVIOR
+==================================================
+
+If external AI is unavailable:
+Use DEMO AI.
+
+If database is empty:
+Provide seed/setup instructions.
+
+If a feature cannot be fully implemented because an external service is unavailable:
+Implement the architecture and clearly document the configuration requirement.
+
+Do not create fake successful API responses for real operations.
+
+==================================================
+TESTING
+==================================================
+
+Add tests for important business logic:
+
+- Authentication/authorization
+- Organization isolation
+- Ticket creation
+- Ticket status transitions
+- SLA calculations
+- AI approval workflow
+- Customer creation
+- Knowledge search
+
+Add test documentation.
+
+==================================================
+DOCUMENTATION
+==================================================
+
+Create:
+
+README.md
+
+docs/
+architecture.md
+database.md
+api.md
+ai.md
+security.md
+deployment.md
+development.md
+testing.md
+
+README must explain:
+- Product
+- Features
+- Architecture
+- Tech stack
+- Setup
+- Environment variables
+- Supabase configuration
+- Database migrations
+- Seed data
+- Demo mode
+- Real AI configuration
+- Testing
+- Deployment
+- Troubleshooting
+
+==================================================
+SYNTHETIC ENGINEERING CONTEXT
+==================================================
+
+Create:
+
+project-history/
+  requirements/
+  engineering-tickets/
+  bug-reports/
+  architecture-decisions/
+  release-notes/
+  qa/
+
+Create realistic example artifacts such as:
+
+REQ-001 Ticket Management
+REQ-002 AI Ticket Summarization
+REQ-003 Knowledge Search
+REQ-004 SLA Monitoring
+
+ENG-001 through ENG-010
+
+BUG-001 through BUG-005
+
+ADR-001 Database Architecture
+ADR-002 AI Provider Abstraction
+ADR-003 Authorization Strategy
+ADR-004 Knowledge Search
+
+Release notes:
+v0.1.0
+v0.2.0
+v1.0.0
+
+IMPORTANT:
+Every synthetic artifact must clearly say:
+
+"SYNTHETIC PROJECT ARTIFACT — CREATED FOR DEMONSTRATION"
+
+Never claim these are real production records.
+
+==================================================
+PROJECT STRUCTURE
+==================================================
+
+Use a clean structure similar to:
+
+src/
+  components/
+  pages/
+  layouts/
+  hooks/
+  services/
+  lib/
+  types/
+  utils/
+
+supabase/
+  migrations/
+  functions/
+  seed/
+
+docs/
+
+project-history/
+
+tests/
+
+public/
+
+.env.example
+Dockerfile
+docker-compose.yml
+README.md
+LICENSE
+
+Adapt to Lovable's actual project structure where appropriate.
+
+==================================================
+DEPLOYMENT
+==================================================
+
+Make the application easy to deploy.
+
+Include:
+- Environment configuration
+- Production build
+- Supabase setup
+- Docker support where appropriate
+- Deployment instructions
+- Database migration instructions
+- Seed instructions
+
+==================================================
+LEGAL/IP
+==================================================
+
+Use only:
+- Original code
+- Properly licensed open-source dependencies
+- Synthetic data
+- Public/non-restricted information
+
+Do NOT use:
+- Employer code
+- Client code
+- Confidential data
+- Private customer data
+- Leaked credentials
+- Proprietary datasets
+- Private conversations
+
+Document third-party dependencies.
+
+Do not make claims of real production history.
+
+==================================================
+APPLICATION ROUTES
+==================================================
+
+Implement:
+
+/
+ /login
+ /register
+ /forgot-password
+ /dashboard
+ /tickets
+ /tickets/:id
+ /customers
+ /customers/:id
+ /knowledge
+ /knowledge/:id
+ /ai-assistant
+ /analytics
+ /team
+ /audit-logs
+ /notifications
+ /settings
+ /settings/profile
+ /settings/organization
+ /settings/users
+ /settings/teams
+ /settings/ai
+ /settings/sla
+ /settings/security
+
+Also create:
+- 404 page
+- Unauthorized page
+- Loading states
+
+==================================================
+QUALITY STANDARD
+==================================================
+
+The final application must feel like a serious B2B product.
+
+Before declaring it complete:
+
+- Inspect every route
+- Fix broken navigation
+- Fix broken forms
+- Fix obvious TypeScript errors
+- Fix console errors
+- Verify database operations
+- Verify authentication
+- Verify RLS
+- Verify permissions
+- Verify ticket workflows
+- Verify customer workflows
+- Verify knowledge workflows
+- Verify AI demo mode
+- Verify AI provider architecture
+- Verify SLA calculations
+- Verify analytics
+- Verify notifications
+- Verify audit logs
+- Verify responsive layouts
+- Remove placeholder lorem ipsum
+- Remove fake/non-functional buttons
+- Add loading/empty/error states
+- Ensure no secrets are committed
+
+Do not stop after creating the UI.
+
+Do not build only a prototype.
+
+Build the actual application.
+
+==================================================
+IMPLEMENTATION ORDER
+==================================================
+
+PHASE 1:
+Application shell
+Authentication
+Organizations
+Database
+RLS
+RBAC
+
+PHASE 2:
+Customers
+Tickets
+Messages
+Comments
+Assignments
+Tags
+
+PHASE 3:
+Knowledge base
+Search
+SLA
+
+PHASE 4:
+AI provider abstraction
+Demo AI
+Real AI integration
+Ticket summary
+Classification
+Suggested response
+Escalation
+Next action
+Similar tickets
+
+PHASE 5:
+Dashboard
+Analytics
+Team
+Notifications
+Audit logs
+Settings
+
+PHASE 6:
+Security
+Validation
+Testing
+Documentation
+Seed data
+Deployment
+
+Prioritize complete working functionality over unnecessary visual features.
+
+==================================================
+BUYER-READY OBJECTIVE
+==================================================
+
+The goal is to produce a legitimate, clean, well-documented, runnable software asset that a technical evaluator can understand quickly.
+
+A buyer should be able to:
+
+1. Clone the repository
+2. Configure environment variables
+3. Set up Supabase
+4. Run migrations
+5. Seed demo data
+6. Start the application
+7. Log in
+8. Explore the product
+9. Test the core workflows
+10. Understand the architecture
+11. Read the documentation
+12. Understand how AI integration works
+
+Do NOT guarantee that the project is worth $5,000 or claim that it has a buyer.
+
+Optimize for:
+- Real functionality
+- Clean architecture
+- Complete workflows
+- Good documentation
+- Security
+- Reusability
+- Buyer/evaluator clarity
+
+==================================================
+FINAL INSTRUCTION
+==================================================
+
+START BUILDING NOW.
+
+Do not only provide a plan.
+
+Do not stop at a landing page.
+
+Do not ask me to manually create the database.
+
+Do not ask me to manually create every page.
+
+Implement the complete product described above.
+
+If a configuration is required from me, implement everything else and clearly identify only the required environment variables/setup at the end.
+
+When finished, provide:
+1. What was built
+2. Setup instructions
+3. Environment variables
+4. Database setup
+5. Demo login/setup
+6. AI configuration
+7. Deployment instructions
+8. Testing instructions
+9. Known limitations
+
+Build the strongest legitimate runnable MVP possible.

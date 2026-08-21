@@ -1,15 +1,20 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: OpsPilot AI customer operations API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
-    description: Health operations
+  - name: dashboard
+  - name: tickets
+  - name: customers
+  - name: knowledge
+  - name: ai
+  - name: notifications
+  - name: audit
 paths:
   /healthz:
     get:
@@ -24,6 +29,211 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /dashboard:
+    get:
+      operationId: getDashboard
+      tags: [dashboard]
+      summary: Operational dashboard summary
+      responses:
+        "200":
+          description: Dashboard metrics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Dashboard"
+  /tickets:
+    get:
+      operationId: listTickets
+      tags: [tickets]
+      summary: List tickets
+      parameters:
+        - { name: search, in: query, schema: { type: string } }
+        - { name: status, in: query, schema: { type: string } }
+        - { name: priority, in: query, schema: { type: string } }
+        - { name: category, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Tickets
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Ticket" }
+    post:
+      operationId: createTicket
+      tags: [tickets]
+      summary: Create ticket
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/TicketInput" }
+      responses:
+        "201":
+          description: Created ticket
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Ticket" }
+  /tickets/{id}:
+    get:
+      operationId: getTicket
+      tags: [tickets]
+      summary: Get ticket detail
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: Ticket detail
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TicketDetail" }
+        "404": { description: Not found }
+    patch:
+      operationId: updateTicket
+      tags: [tickets]
+      summary: Update ticket
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/TicketUpdate" }
+      responses:
+        "200":
+          description: Updated ticket
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Ticket" }
+  /customers:
+    get:
+      operationId: listCustomers
+      tags: [customers]
+      summary: List customers
+      parameters:
+        - { name: search, in: query, schema: { type: string } }
+        - { name: status, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Customers
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Customer" }
+    post:
+      operationId: createCustomer
+      tags: [customers]
+      summary: Create customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CustomerInput" }
+      responses:
+        "201":
+          description: Created customer
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Customer" }
+  /customers/{id}:
+    get:
+      operationId: getCustomer
+      tags: [customers]
+      summary: Get customer detail
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: Customer detail
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/CustomerDetail" }
+  /knowledge:
+    get:
+      operationId: listKnowledge
+      tags: [knowledge]
+      summary: Search knowledge base
+      parameters:
+        - { name: search, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Knowledge documents
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/KnowledgeDocument" }
+    post:
+      operationId: createKnowledge
+      tags: [knowledge]
+      summary: Create knowledge document
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/KnowledgeInput" }
+      responses:
+        "201":
+          description: Created document
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/KnowledgeDocument" }
+  /ai/tickets/{id}:
+    post:
+      operationId: analyzeTicket
+      tags: [ai]
+      summary: Generate human-reviewable ticket analysis
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/AiActionInput" }
+      responses:
+        "200":
+          description: Demo or real AI analysis
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/AiAnalysis" }
+  /notifications:
+    get:
+      operationId: listNotifications
+      tags: [notifications]
+      responses:
+        "200":
+          description: Notifications
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Notification" }
+  /notifications/{id}/read:
+    post:
+      operationId: markNotificationRead
+      tags: [notifications]
+      summary: Mark notification as read
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: Updated notification
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Notification" }
+  /audit-logs:
+    get:
+      operationId: listAuditLogs
+      tags: [audit]
+      responses:
+        "200":
+          description: Audit events
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/AuditLog" }
 components:
   schemas:
     HealthStatus:
@@ -33,4 +243,175 @@ components:
           type: string
       required:
         - status
+    Dashboard:
+      type: object
+      required: [openTickets, urgentTickets, atRiskSlas, breachedSlas, resolvedToday, avgResponseMinutes, avgResolutionHours, aiAssistedTickets, volume, statusBreakdown, priorityBreakdown, agentWorkload]
+      properties:
+        openTickets: { type: number }
+        urgentTickets: { type: number }
+        atRiskSlas: { type: number }
+        breachedSlas: { type: number }
+        resolvedToday: { type: number }
+        avgResponseMinutes: { type: number }
+        avgResolutionHours: { type: number }
+        aiAssistedTickets: { type: number }
+        volume: { type: array, items: { $ref: "#/components/schemas/MetricPoint" } }
+        statusBreakdown: { type: array, items: { $ref: "#/components/schemas/MetricPoint" } }
+        priorityBreakdown: { type: array, items: { $ref: "#/components/schemas/MetricPoint" } }
+        agentWorkload: { type: array, items: { $ref: "#/components/schemas/MetricPoint" } }
+    MetricPoint:
+      type: object
+      required: [label, value]
+      properties:
+        label: { type: string }
+        value: { type: number }
+    Customer:
+      type: object
+      required: [id, name, company, email, tier, status, openTickets, lifetimeValue, updatedAt]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        company: { type: string }
+        email: { type: string }
+        phone: { type: string }
+        tier: { type: string }
+        status: { type: string }
+        openTickets: { type: number }
+        lifetimeValue: { type: number }
+        updatedAt: { type: string }
+    CustomerInput:
+      type: object
+      required: [name, company, email, tier]
+      properties:
+        name: { type: string, minLength: 1 }
+        company: { type: string, minLength: 1 }
+        email: { type: string, minLength: 3 }
+        phone: { type: string }
+        tier: { type: string }
+        status: { type: string }
+    CustomerDetail:
+      allOf:
+        - { $ref: "#/components/schemas/Customer" }
+        - type: object
+          required: [notes, timeline]
+          properties:
+            notes: { type: string }
+            timeline: { type: array, items: { $ref: "#/components/schemas/TimelineEvent" } }
+    TimelineEvent:
+      type: object
+      required: [id, label, detail, createdAt]
+      properties:
+        id: { type: string }
+        label: { type: string }
+        detail: { type: string }
+        createdAt: { type: string }
+    Ticket:
+      type: object
+      required: [id, title, customer, status, priority, category, source, assignee, team, sla, createdAt, updatedAt]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        description: { type: string }
+        customer: { type: string }
+        customerId: { type: string }
+        status: { type: string }
+        priority: { type: string }
+        category: { type: string }
+        source: { type: string }
+        assignee: { type: string }
+        team: { type: string }
+        sla: { type: string }
+        createdAt: { type: string }
+        updatedAt: { type: string }
+    TicketInput:
+      type: object
+      required: [title, description, customer, priority, category]
+      properties:
+        title: { type: string, minLength: 1 }
+        description: { type: string, minLength: 1 }
+        customer: { type: string }
+        priority: { type: string }
+        category: { type: string }
+        source: { type: string }
+    TicketUpdate:
+      type: object
+      properties:
+        status: { type: string }
+        priority: { type: string }
+        assignee: { type: string }
+        team: { type: string }
+        reply: { type: string }
+        internalNote: { type: string }
+    TicketDetail:
+      allOf:
+        - { $ref: "#/components/schemas/Ticket" }
+        - type: object
+          required: [messages, ai]
+          properties:
+            messages: { type: array, items: { $ref: "#/components/schemas/Message" } }
+            ai: { $ref: "#/components/schemas/AiAnalysis" }
+    Message:
+      type: object
+      required: [id, author, body, kind, createdAt]
+      properties:
+        id: { type: string }
+        author: { type: string }
+        body: { type: string }
+        kind: { type: string }
+        createdAt: { type: string }
+    KnowledgeDocument:
+      type: object
+      required: [id, title, excerpt, category, status, author, updatedAt, views]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        excerpt: { type: string }
+        category: { type: string }
+        status: { type: string }
+        author: { type: string }
+        updatedAt: { type: string }
+        views: { type: number }
+    KnowledgeInput:
+      type: object
+      required: [title, content, category]
+      properties:
+        title: { type: string }
+        content: { type: string }
+        category: { type: string }
+    AiActionInput:
+      type: object
+      required: [action]
+      properties:
+        action: { type: string }
+    AiAnalysis:
+      type: object
+      required: [provider, summary, confidence, recommendation, classification, suggestedReply, reviewed]
+      properties:
+        provider: { type: string }
+        summary: { type: array, items: { type: string } }
+        confidence: { type: number }
+        recommendation: { type: string }
+        classification: { type: object, additionalProperties: { type: string } }
+        suggestedReply: { type: string }
+        reviewed: { type: boolean }
+    Notification:
+      type: object
+      required: [id, title, detail, kind, read, createdAt]
+      properties:
+        id: { type: string }
+        title: { type: string }
+        detail: { type: string }
+        kind: { type: string }
+        read: { type: boolean }
+        createdAt: { type: string }
+    AuditLog:
+      type: object
+      required: [id, action, entity, actor, detail, createdAt]
+      properties:
+        id: { type: string }
+        action: { type: string }
+        entity: { type: string }
+        actor: { type: string }
+        detail: { type: string }
+        createdAt: { type: string }
 

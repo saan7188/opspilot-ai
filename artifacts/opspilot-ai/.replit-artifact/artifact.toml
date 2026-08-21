@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "OpsPilot AI"
+description = "An AI-powered customer operations and support platform for teams to manage tickets, customers, knowledge, SLAs, analytics, and human-reviewed AI assistance."
+version = "1.0.0"
+id = "artifacts/opspilot-ai"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 24562
+
+[services.development]
+run = "pnpm --filter @workspace/opspilot-ai run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/opspilot-ai", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/opspilot-ai/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "24562"
+BASE_PATH = "/"
