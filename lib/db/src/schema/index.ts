@@ -1,17 +1,109 @@
 import {
   boolean,
+  index,
   integer,
   jsonb,
+  pgEnum,
   pgTable,
   text,
   timestamp,
+  unique,
   uuid,
+  foreignKey,
 } from "drizzle-orm/pg-core";
+
+// ============================================================================
+// ENUMS
+// ============================================================================
+
+/**
+ * Role enum: Defines authorization levels for multi-tenancy RBAC
+ * ADMIN: Full organization administration, manage users, view all data
+ * MANAGER: Manage operational data, teams, and analytics
+ * AGENT: Work with tickets, customers, knowledge base
+ * VIEWER: Read-only access to tickets, customers, and knowledge base
+ */
+export const roleEnum = pgEnum("role", ["ADMIN", "MANAGER", "AGENT", "VIEWER"]);
+
+// ============================================================================
+// TIMESTAMP HELPER
+// ============================================================================
 
 const timestamps = {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 };
+
+// ============================================================================
+// AUTHENTICATION & MULTI-TENANCY
+// ============================================================================
+
+/**
+ * Users table: Stores user identity and authentication credentials.
+ * One user can belong to multiple organizations via user_organizations junction table.
+ * Passwords are hashed with bcrypt and never stored plaintext.
+ */
+export const users = pgTable(
+  "users",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    email: text("email").notNull().unique(),
+    name: text("name").notNull(),
+    /**
+     * passwordHash: bcrypt-hashed password. NEVER stored plaintext.
+     * Only populated via secure password hashing during registration/password reset.
+     */
+    passwordHash: text("password_hash").notNull(),
+    isActive: boolean("is_active").notNull().default(true),
+    lastLoginAt: timestamp("last_login_at", { withTimezone: true }),
+    ...timestamps,
+  },
+  (table) => ({
+    emailIdx: index("users_email_idx").on(table.email),
+  })
+);
+
+/**
+ * UserOrganizations table: Maps users to organizations with specific roles.
+ * Enables multi-tenancy: a user can belong to multiple organizations with different roles in each.
+ *
+ * Constraints:
+ * - (user_id, organization_id) UNIQUE: prevents duplicate memberships
+ * - user_id FOREIGN KEY CASCADE: clean up memberships when user is deleted
+ * - organization_id FOREIGN KEY CASCADE: clean up memberships when org is deleted
+ */
+export const userOrganizations = pgTable(
+  "user_organizations",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id").notNull(),
+    organizationId: uuid("organization_id").notNull(),
+    role: roleEnum("role").notNull().default("VIEWER"),
+    ...timestamps,
+  },
+  (table) => ({
+    userFk: foreignKey({
+      columns: [table.userId],
+      foreignColumns: [users.id],
+      name: "user_organizations_user_id_fk",
+    }).onDelete("cascade"),
+    orgFk: foreignKey({
+      columns: [table.organizationId],
+      foreignColumns: [organizations.id],
+      name: "user_organizations_org_id_fk",
+    }).onDelete("cascade"),
+    uniqueUserOrg: unique("user_organizations_unique").on(
+      table.userId,
+      table.organizationId
+    ),
+    userIdIdx: index("user_organizations_user_id_idx").on(table.userId),
+    orgIdIdx: index("user_organizations_org_id_idx").on(table.organizationId),
+  })
+);
+
+// ============================================================================
+// OPERATIONAL SCHEMA (UNCHANGED)
+// ============================================================================
 
 export const organizations = pgTable("organizations", {
   id: uuid("id").defaultRandom().primaryKey(),
